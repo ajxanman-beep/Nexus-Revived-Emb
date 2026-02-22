@@ -5,7 +5,6 @@
 </head>
 <body>
     <script>
-        // This function creates the blank tab and fills it with the UI
         function launch() {
             const win = window.open('about:blank', '_blank');
             if (!win) {
@@ -13,7 +12,6 @@
                 return;
             }
 
-            // The HTML code for the "Click to Start" page
             const code = `
                 <!DOCTYPE html>
                 <html>
@@ -26,8 +24,9 @@
                         }
                         #overlay {
                             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                            background: rgba(0, 0, 0, 1); display: flex;
+                            background: #000; display: flex;
                             justify-content: center; align-items: center; cursor: pointer;
+                            z-index: 10;
                         }
                         #overlay h1 {
                             color: white; border: 2px solid white; padding: 20px 40px;
@@ -39,12 +38,22 @@
                 </head>
                 <body>
                     <div id="overlay"><h1>CLICK TO START</h1></div>
-                    <iframe id="frame" src="https://nexus-revived.onrender.com/"></iframe>
+                    <iframe id="frame" src="https://final-jrnq.onrender.com"></iframe>
 
                     <script>
-                        document.getElementById('overlay').addEventListener('click', function() {
-                            this.style.display = 'none';
-                            document.getElementById('frame').style.display = 'block';
+                        const overlay = document.getElementById('overlay');
+                        const frame = document.getElementById('frame');
+
+                        // This click satisfies the "User Activation" requirement
+                        overlay.addEventListener('click', function() {
+                            overlay.style.display = 'none';
+                            frame.style.display = 'block';
+                            
+                            // Now that they've clicked, we can arm the exit prompt
+                            window.addEventListener('beforeunload', function (e) {
+                                e.preventDefault();
+                                e.returnValue = ''; // Required for Chrome/Edge/Firefox
+                            });
                         });
                     <\/script>
                 </body>
@@ -55,11 +64,10 @@
             win.document.write(code);
             win.document.close();
             
-            // Redirect the original tab to a "safe" site like Google or Close it
+            // Redirect the original launcher tab to Google
             window.location.href = "https://www.google.com";
         }
 
-        // Trigger the launch immediately
         launch();
     </script>
 </body>
