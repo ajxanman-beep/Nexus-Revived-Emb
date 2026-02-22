@@ -1,90 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Nexus-Revived Launcher</title>
-    <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100%; 
-            width: 100%;
-            overflow: hidden; 
-            background-color: #000;
-            font-family: sans-serif;
-        }
-
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            cursor: pointer;
-        }
-
-        #overlay h1 {
-            color: white;
-            border: 2px solid white;
-            padding: 20px 40px;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
-
-        #overlay h1:hover {
-            background: white;
-            color: black;
-        }
-    </style>
+    <title>Loading...</title>
 </head>
 <body>
-
-    <div id="overlay">
-        <h1>CLICK TO START (IN ABOUT:BLANK)</h1>
-    </div>
-
     <script>
-        const overlay = document.getElementById('overlay');
-
-        overlay.addEventListener('click', function() {
-            // 1. Open a new blank window
+        // This function creates the blank tab and fills it with the UI
+        function launch() {
             const win = window.open('about:blank', '_blank');
-
-            if (!win || win.closed) {
-                alert('Please allow pop-ups to launch the app.');
+            if (!win) {
+                alert("Pop-up blocked! Please allow pop-ups to continue.");
                 return;
             }
 
-            // 2. Define the content to inject (your original iframe setup)
-            const content = `
+            // The HTML code for the "Click to Start" page
+            const code = `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Nexus-Revived</title>
                     <style>
-                        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: #000; }
-                        iframe { width: 100%; height: 100vh; border: none; }
+                        body, html { 
+                            margin: 0; padding: 0; height: 100%; width: 100%; 
+                            overflow: hidden; background-color: #000; font-family: sans-serif; 
+                        }
+                        #overlay {
+                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                            background: rgba(0, 0, 0, 1); display: flex;
+                            justify-content: center; align-items: center; cursor: pointer;
+                        }
+                        #overlay h1 {
+                            color: white; border: 2px solid white; padding: 20px 40px;
+                            border-radius: 10px; transition: 0.3s;
+                        }
+                        #overlay h1:hover { background: white; color: black; }
+                        iframe { width: 100%; height: 100vh; border: none; display: none; }
                     </style>
                 </head>
                 <body>
-                    <iframe src="https://final-jrnq.onrender.com"></iframe>
+                    <div id="overlay"><h1>CLICK TO START</h1></div>
+                    <iframe id="frame" src="https://nexus-revived.onrender.com/"></iframe>
+
+                    <script>
+                        document.getElementById('overlay').addEventListener('click', function() {
+                            this.style.display = 'none';
+                            document.getElementById('frame').style.display = 'block';
+                        });
+                    <\/script>
                 </body>
                 </html>
             `;
 
-            // 3. Inject the content into the new about:blank window
             win.document.open();
-            win.document.write(content);
+            win.document.write(code);
             win.document.close();
+            
+            // Redirect the original tab to a "safe" site like Google or Close it
+            window.location.href = "https://www.google.com";
+        }
 
-            // Optional: Close the current "launcher" tab or change its text
-            overlay.innerHTML = "<h1>LAUNCHED SUCCESSFULLY</h1>";
-        });
+        // Trigger the launch immediately
+        launch();
     </script>
-
 </body>
 </html>
