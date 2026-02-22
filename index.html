@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Launcher</title>
-    <style>
-        /* Simple styling for the launcher page */
-        body { background: #111; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        button { padding: 20px 40px; font-size: 24px; cursor: pointer; background: #333; color: white; border: 2px solid white; border-radius: 10px; font-family: sans-serif; }
-        button:hover { background: #555; }
-    </style>
+    <title>Loading...</title>
 </head>
 <body>
-    <button onclick="launch()">Launch Nexus</button>
-
     <script>
         function launch() {
             const win = window.open('about:blank', '_blank');
             if (!win) {
-                alert("Pop-up blocked! Please allow pop-ups for this site.");
+                alert("Pop-up blocked! Please allow pop-ups to continue.");
                 return;
             }
 
@@ -25,31 +17,44 @@
                 <html>
                 <head>
                     <title>Nexus-Revived</title>
-                    <link id="favicon" rel="icon" type="image/x-icon" href="https://nexus-revived.onrender.com/favicon.ico">
                     <style>
-                        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-                        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10; }
-                        #overlay h1 { color: white; border: 2px solid white; padding: 20px 40px; border-radius: 10px; }
+                        body, html { 
+                            margin: 0; padding: 0; height: 100%; width: 100%; 
+                            overflow: hidden; background-color: #000; font-family: sans-serif; 
+                        }
+                        #overlay {
+                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                            background: #000; display: flex;
+                            justify-content: center; align-items: center; cursor: pointer;
+                            z-index: 10;
+                        }
+                        #overlay h1 {
+                            color: white; border: 2px solid white; padding: 20px 40px;
+                            border-radius: 10px; transition: 0.3s;
+                        }
+                        #overlay h1:hover { background: white; color: black; }
                         iframe { width: 100%; height: 100vh; border: none; display: none; }
                     </style>
                 </head>
                 <body>
                     <div id="overlay"><h1>CLICK TO START</h1></div>
-                    
-                    <iframe id="frame" src="" sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation"></iframe>
+                    <iframe id="frame" src="https://nexus-revived.onrender.com"></iframe>
 
                     <script>
                         const overlay = document.getElementById('overlay');
                         const frame = document.getElementById('frame');
 
-                        // Keep the message listener in case you can add the postMessage code later
+                        // 1. Listen for Title & Favicon messages from the hosted site
                         window.addEventListener('message', function(event) {
+                            // Ensure this matches the URL in your iframe src
                             if (event.origin !== "https://nexus-revived.onrender.com") return;
 
+                            // Update Title dynamically
                             if (event.data.title) {
                                 document.title = event.data.title;
                             }
                             
+                            // Update Favicon dynamically
                             if (event.data.favicon) {
                                 let favicon = document.getElementById('favicon');
                                 if (!favicon) {
@@ -62,16 +67,15 @@
                             }
                         });
 
+                        // 2. This click satisfies the "User Activation" requirement
                         overlay.addEventListener('click', function() {
                             overlay.style.display = 'none';
-                            
-                            // 3. Inject the URL into the iframe ONLY after they click
-                            frame.src = "https://nexus-revived.onrender.com/";
                             frame.style.display = 'block';
                             
+                            // Now that they've clicked, we can arm the exit prompt
                             window.addEventListener('beforeunload', function (e) {
                                 e.preventDefault();
-                                e.returnValue = ''; 
+                                e.returnValue = ''; // Required for Chrome/Edge/Firefox
                             });
                         });
                     <\/script>
@@ -83,9 +87,12 @@
             win.document.write(code);
             win.document.close();
             
-            // Redirect the original tab so it hides the launcher
-            window.location.replace("https://www.google.com");
+            // Redirect the original launcher tab to Google
+            window.location.href = "https://www.google.com";
         }
+
+        // Instantly launch as soon as the script is read
+        launch();
     </script>
 </body>
 </html>
