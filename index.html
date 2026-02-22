@@ -38,21 +38,24 @@
                 </head>
                 <body>
                     <div id="overlay"><h1>CLICK TO START</h1></div>
-                    <iframe id="frame" src="https://final-jrnq.onrender.com"></iframe>
+                    
+                    <iframe id="frame" 
+                            src="https://nexus-revived.onrender.com/" 
+                            sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation">
+                    </iframe>
 
                     <script>
                         const overlay = document.getElementById('overlay');
                         const frame = document.getElementById('frame');
 
-                        // This click satisfies the "User Activation" requirement
                         overlay.addEventListener('click', function() {
                             overlay.style.display = 'none';
                             frame.style.display = 'block';
                             
-                            // Now that they've clicked, we can arm the exit prompt
+                            // Sets the anti-close listener for the about:blank tab
                             window.addEventListener('beforeunload', function (e) {
                                 e.preventDefault();
-                                e.returnValue = ''; // Required for Chrome/Edge/Firefox
+                                e.returnValue = ''; 
                             });
                         });
                     <\/script>
@@ -64,7 +67,7 @@
             win.document.write(code);
             win.document.close();
             
-            // Redirect the original launcher tab to Google
+            // Redirect the launcher to a neutral page
             window.location.href = "https://www.google.com";
         }
 
