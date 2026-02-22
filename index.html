@@ -17,6 +17,7 @@
                 <html>
                 <head>
                     <title>Nexus-Revived</title>
+                    <link id="favicon" rel="icon" type="image/x-icon" href="https://nexus-revived.onrender.com/favicon.ico">
                     <style>
                         body, html { 
                             margin: 0; padding: 0; height: 100%; width: 100%; 
@@ -51,8 +52,11 @@
                         overlay.addEventListener('click', function() {
                             overlay.style.display = 'none';
                             frame.style.display = 'block';
-                            
-                            // Sets the anti-close listener for the about:blank tab
+
+                            // 1. Manually set the Tab Title to match the site
+                            document.title = "Nexus-Revived";
+
+                            // 2. Arm the "Leave site?" dialog
                             window.addEventListener('beforeunload', function (e) {
                                 e.preventDefault();
                                 e.returnValue = ''; 
@@ -67,8 +71,7 @@
             win.document.write(code);
             win.document.close();
             
-            // Redirect the launcher to a neutral page
-            window.location.href = "https://www.google.com";
+            window.location.href = "https://www.nexus.com";
         }
 
         launch();
