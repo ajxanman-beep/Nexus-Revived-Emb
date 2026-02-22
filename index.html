@@ -9,17 +9,72 @@
             height: 100%; 
             width: 100%;
             overflow: hidden; 
+            background-color: #000;
+            font-family: sans-serif;
         }
+        
+        /* The Iframe */
         iframe { 
             width: 100%; 
             height: 100vh; 
             border: none; 
+            display: none; /* Hidden until clicked */
+        }
+
+        /* The Overlay */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            cursor: pointer;
+        }
+
+        #overlay h1 {
+            color: white;
+            border: 2px solid white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        #overlay h1:hover {
+            background: white;
+            color: black;
         }
     </style>
 </head>
 <body>
 
-    <iframe src="https://final-jrnq.onrender.com"></iframe>
+    <div id="overlay">
+        <h1>CLICK TO START</h1>
+    </div>
+
+    <iframe id="contentFrame" src="https://final-jrnq.onrender.com"></iframe>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const frame = document.getElementById('contentFrame');
+
+        // 1. Handle the Click to Start
+        overlay.addEventListener('click', function() {
+            overlay.style.display = 'none'; // Remove overlay
+            frame.style.display = 'block';  // Show the iframe
+        });
+
+        // 2. Handle the Exit Prompt
+        window.addEventListener('beforeunload', function (e) {
+            // This will now work because the user HAD to click to get in
+            e.preventDefault();
+            e.returnValue = ''; 
+        });
+    </script>
 
 </body>
 </html>
