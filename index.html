@@ -1,69 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Nexus-Revived Launcher</title>
+    <title>Launcher</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; display: flex; justify-content: center; align-items: center; font-family: sans-serif; }
-        #start-btn { color: white; border: 2px solid white; padding: 20px 40px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 24px; font-weight: bold; }
-        #start-btn:hover { background: white; color: black; }
+        /* Simple styling for the launcher page */
+        body { background: #111; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        button { padding: 20px 40px; font-size: 24px; cursor: pointer; background: #333; color: white; border: 2px solid white; border-radius: 10px; font-family: sans-serif; }
+        button:hover { background: #555; }
     </style>
 </head>
 <body>
-
-    <div id="start-btn">CLICK TO LAUNCH (ABOUT:BLANK)</div>
+    <button onclick="launch()">Launch Nexus</button>
 
     <script>
-        document.getElementById('start-btn').addEventListener('click', function() {
-            // 1. Open the blank window
+        function launch() {
             const win = window.open('about:blank', '_blank');
             if (!win) {
-                alert("Pop-up blocked! Please click the 'Pop-ups blocked' icon in your URL bar and allow them.");
+                alert("Pop-up blocked! Please allow pop-ups for this site.");
                 return;
             }
 
-            // 2. The code to put inside about:blank
-            const content = `
+            const code = `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Nexus-Revived</title>
-                    <link id="tab-icon" rel="icon" type="image/x-icon" href="https://nexus-revived.onrender.com/favicon.ico">
+                    <link id="favicon" rel="icon" type="image/x-icon" href="https://nexus-revived.onrender.com/favicon.ico">
                     <style>
-                        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: #000; }
-                        iframe { width: 100%; height: 100vh; border: none; }
+                        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+                        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10; }
+                        #overlay h1 { color: white; border: 2px solid white; padding: 20px 40px; border-radius: 10px; }
+                        iframe { width: 100%; height: 100vh; border: none; display: none; }
                     </style>
                 </head>
                 <body>
-                    <iframe id="nexus-frame" src="https://nexus-revived.onrender.com/"></iframe>
-                    <script>
-                        // Prevent accidental closing
-                        window.onbeforeunload = function() { return "Are you sure?"; };
+                    <div id="overlay"><h1>CLICK TO START</h1></div>
+                    
+                    <iframe id="frame" src="" sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation"></iframe>
 
-                        // Attempt to sync title/icon every second
-                        const frame = document.getElementById('nexus-frame');
-                        setInterval(() => {
-                            try {
-                                if (frame.contentDocument && frame.contentDocument.title) {
-                                    document.title = frame.contentDocument.title;
-                                }
-                            } catch (e) {
-                                // This might fail due to 'Cross-Origin' security, 
-                                // which is normal for most browsers.
+                    <script>
+                        const overlay = document.getElementById('overlay');
+                        const frame = document.getElementById('frame');
+
+                        // Keep the message listener in case you can add the postMessage code later
+                        window.addEventListener('message', function(event) {
+                            if (event.origin !== "https://nexus-revived.onrender.com") return;
+
+                            if (event.data.title) {
+                                document.title = event.data.title;
                             }
-                        }, 1000);
+                            
+                            if (event.data.favicon) {
+                                let favicon = document.getElementById('favicon');
+                                if (!favicon) {
+                                    favicon = document.createElement('link');
+                                    favicon.id = 'favicon';
+                                    favicon.rel = 'icon';
+                                    document.head.appendChild(favicon);
+                                }
+                                favicon.href = event.data.favicon;
+                            }
+                        });
+
+                        overlay.addEventListener('click', function() {
+                            overlay.style.display = 'none';
+                            
+                            // 3. Inject the URL into the iframe ONLY after they click
+                            frame.src = "https://nexus-revived.onrender.com/";
+                            frame.style.display = 'block';
+                            
+                            window.addEventListener('beforeunload', function (e) {
+                                e.preventDefault();
+                                e.returnValue = ''; 
+                            });
+                        });
                     <\/script>
                 </body>
                 </html>
             `;
 
-            // 3. Write the content and close the original tab
             win.document.open();
-            win.document.write(content);
+            win.document.write(code);
             win.document.close();
-
-            // Redirect this tab to Google so it "disappears"
-            window.location.href = "https://www.google.com";
-        });
+            
+            // Redirect the original tab so it hides the launcher
+            window.location.replace("https://www.google.com");
+        }
     </script>
 </body>
 </html>
